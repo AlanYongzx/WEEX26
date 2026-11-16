@@ -1,0 +1,81 @@
+name: checks
+
+# Controles automatiques a chaque push / pull request.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repo-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine diff base
+        id: base
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ] && git cat-file -e "${{ github.event.before }}" 2>/dev/null; then
+            echo "base=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: data/raw is read-only (no modify / delete / rename)
+        if: steps.base.outputs.base != ''
+        run: |
+          bad=$(git diff --name-status "${{ steps.base.outputs.base }}" HEAD -- data/raw | grep -Ev '^A' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::Fichiers de data/raw modifies/supprimes (interdit, ecrire dans data/processed/) :"
+            echo "$bad"; exit 1
+          fi
+          echo "OK"
+
+      - name: No wind .mat files and no file > 50 MB
+        run: |
+          fail=0
+          if git ls-files | grep -Ei '(^|/)(vent1|vent_un)[^/]*\.mat$'; then
+            echo "::error::Fichier vent detecte : il doit rester en local (.gitignore)."; fail=1
+          fi
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            s=$(stat -c %s "$f")
+            if [ "$s" -gt 52428800 ]; then echo "::error file=$f::Fichier > 50 MB ($s octets)"; fail=1; fi
+          done < <(git ls-files)
+          exit $fail
+
+      - name: Deliverable file names
+        run: |
+          fail=0
+          chk() { # dossier  regex
+            for f in $(git ls-files "$1" | grep -v '/\.gitkeep$' | grep -v '/README\.md$'); do
+              b=$(basename "$f")
+              if ! echo "$b" | grep -Eq "$2"; then
+                echo "::error file=$f::Nom non conforme, attendu: $2"; fail=1
+              fi
+            done
+          }
+          chk deliverables/L1_1_schema_bloc '^L1_1_B4(_IA)?(_v[0-9]{2})?\.(pptx|odp)$'
+          chk deliverables/L1_2_matlab      '^(L1_2_B4(_IA)?(_v[0-9]{2})?\.m|map\.xlsx)$'
+          exit $fail
+
+      - name: Matlab deliverable is a single self-contained file
+        run: |
+          for f in $(git ls-files 'deliverables/L1_2_matlab/*.m'); do
+            echo "== $f"
+            # Lecture des donnees : seul map.xlsx (+ fichier vent optionnel) est autorise
+            grep -nE "(readtable|readmatrix|xlsread|load)\s*\(" "$f" || true
+            if grep -nE "addpath|run\s*\(" "$f"; then
+              echo "::warning file=$f::addpath/run detecte : le livrable doit etre un fichier unique."
+            fi
+            if LC_ALL=C grep -nP '[^\x00-\x7F]' "$f" | head -5 | grep -q .; then
+              echo "::warning file=$f::Caracteres non ASCII (risque d'encodage sur le PC de l'enseignant)."
+            fi
+          done

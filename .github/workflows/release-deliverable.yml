@@ -1,0 +1,28 @@
+name: release-deliverable
+
+# Pousser un tag (L1_1, L1_2, L1_2_v02, phase2...) cree une Release
+# contenant une archive des livrables : version figee, telechargeable par toute l'equipe.
+on:
+  push:
+    tags:
+      - "L1_*"
+      - "phase2*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build archive
+        run: |
+          zip -r "deliverables_${GITHUB_REF_NAME}.zip" deliverables -x '*/.gitkeep'
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "deliverables_${GITHUB_REF_NAME}.zip" \
+            --title "Livrable $GITHUB_REF_NAME" \
+            --notes "Version figee remise sur Moodle. Commit: $GITHUB_SHA"

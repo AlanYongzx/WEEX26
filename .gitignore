@@ -1,0 +1,36 @@
+# --- MATLAB ---
+*.asv
+*.autosave
+*.m~
+*.mex*
+slprj/
+*.slxc
+codegen/
+.mlx_cache/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# --- Office / OS lock & temp files ---
+~$*
+.~lock.*#
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Wind fields: large, provided by Moodle, not required by teacher (keep local only) ---
+data/raw/Vent*.mat
+data/raw/vent_*.mat
+
+# --- Generated outputs from the single-file Matlab script ---
+results_B4/
+results/logs/*.log
+
+# --- Editors ---
+.vscode/
+.idea/
