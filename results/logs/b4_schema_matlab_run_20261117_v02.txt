@@ -1,0 +1,90 @@
+MATLAB R2024b, 2026-11-17 15:25 (Europe/Paris), C:\Users\Alan Yong\Documents\MATLAB\WEEX_B4\b4_schema_model.m
+Captured with: b4log = evalc('b4_schema_model')
+
+===== B4 schema-bloc model : results =====
+k_dry_s-1                         1e-06
+k_wet_s-1                     7.222e-05
+wet_time_frac                    0.1598
+k_PM_mean_s-1                 8.167e-06
+dry_share                       0.06787
+k_PM_mean_vd5_s-1             1.137e-05
+k_COV_s-1                         4e-06
+PM10_C_ug_m3                   0.007667
+PM10_tau_d                        1.417
+PM10_f_removed_src              0.08918
+COVNM_C_ug_m3                   0.02417
+COVNM_tau_d                       2.894
+COVNM_f_removed_src             0.04576
+Cg_over_C200_min                 0.9629
+F_PM_mg_m2_yr                     1.976
+dep_src_t                          9.72
+dep_src_agri_t                    5.239
+dep_src_nat_t                     3.587
+dep_src_fw_t                     0.8943
+irr_src_kg                        89.43
+Csoil_src_1yr_ug_kg               13.17
+Csoil_src_30yr_ug_kg              395.2
+f_fol                           0.01656
+ing_src_1yr_foliar_kg             88.23
+ing_src_1yr_root_kg              0.3552
+ing_src_30yr_root_kg              10.66
+ing_reg_1yr_foliar_kg             190.6
+ing_reg_1yr_root_kg              0.7673
+ing_reg_30yr_root_kg              23.02
+ing_reg_1yr_total_kg              191.3
+iF_ing_reg                     0.001755
+inh_PM10_src_kg                 0.02408
+iF_inh_PM10_src               2.209e-07
+inh_PM10_reg_kg                 0.05995
+inh_COVNM_src_kg                0.07593
+inh_COVNM_reg_kg                 0.1902
+D_PM10_src                       0.8342
+D_PM10_reg                          2.1
+D_PM10_inh                        1.052
+D_PM10_ing                        1.048
+D_COVNM_src                      0.1101
+D_COVNM_reg                        0.28
+D_COVNM_inh                     0.08512
+D_COVNM_ing                      0.1949
+D_total                            2.38
+EF_inh_DALY_kg                    17.55
+EF_ing_DALY_kg                 0.005477
+COV_deg_src_t                     15.01
+COV_deg_reg_t                     193.5
+O3_src_max_t                      45.03
+C_O3_src_max_ug_m3             0.003477
+O3_reg_max_t                      580.6
+
+Sensitivity, PM10 ingestion (whole domain):
+  base              191 kg/yr  x1.00
+  f_int 0.1        64.3 kg/yr  x0.34
+  f_int 0.5         318 kg/yr  x1.66
+  t_w 7 d          96.3 kg/yr  x0.50
+  t_w 28 d          363 kg/yr  x1.90
+  BCF 1e-3          191 kg/yr  x1.00
+  BCF 1e-1          198 kg/yr  x1.04
+  30 yr soil        214 kg/yr  x1.12
+
+===== Self-checks =====
+  [PASS] k_PM        ref 8.167e-06  got 8.167e-06  rel.err 5.6e-05
+  [PASS] C_PM        ref 0.007667   got 0.007667   rel.err 8.2e-06
+  [PASS] C_COV       ref 0.02417    got 0.02417    rel.err 5.3e-05
+  [PASS] F_PM        ref 1.976      got 1.976      rel.err 4.0e-05
+  [PASS] dep_src     ref 9.72       got 9.72       rel.err 3.4e-05
+  [PASS] ing_reg     ref 191.3      got 191.3      rel.err 2.1e-04
+  [PASS] inh_PM_src  ref 0.02408    got 0.02408    rel.err 1.5e-04
+  [PASS] D_PM_src    ref 0.8342     got 0.8342     rel.err 6.7e-06
+  [PASS] D_tot       ref 2.38       got 2.38       rel.err 0.0e+00
+  [PASS] O3_C        ref 0.003477   got 0.003477   rel.err 1.4e-04
+  [PASS] mass balance PM10 |err|<1e-12
+  [PASS] mass balance COVNM |err|<1e-12
+  [PASS] wet fraction in (0,1)
+  [PASS] k_mean between k_dry and k_wet
+  [PASS] land fractions sum to 1
+  [PASS] deposition split conserves mass
+  [PASS] D_PM10_src ~ transport run 0.83 (5%)
+  [PASS] box C_PM10 ~ transport 0.0075 (5%)
+  [PASS] inh+ing damage = total
+  19 / 19 checks passed
+
+Results written to C:\Users\Alan Yong\Documents\MATLAB\WEEX_B4\results

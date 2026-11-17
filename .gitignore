@@ -34,3 +34,6 @@ results/logs/*.log
 # --- Editors ---
 .vscode/
 .idea/
+
+# Sorties locales de b4_schema_model.m (copies de reference dans results/)
+src/matlab/results/
